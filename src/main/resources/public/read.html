@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/index.css" media="screen">
+    <script type="text/javascript" src="/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="/js/handlebars-v4.0.5.js"></script>
+    <title>Board read</title>
+</head>
+<body>
+<div class="tool_bar">
+    <div class="critical">
+        <div class="btn_submenu">
+            <a class="btn_tool" data-role="button"><span class="txt">삭제</span></a>
+        </div>
+        <div class="btn_submenu">
+            <a class="btn_tool" data-role="button"><span class="txt">수정</span></a>
+        </div>
+    </div>
+</div>
+
+<div id="mailReadArea" style="display:block;">
+    <!-- mail view -->
+    <div class="view_content mail_view" >
+        <div class="header">
+            <h2>
+                <span class="title">제목입니다</span>
+
+            </h2>
+            <table class="list_report">
+                <tbody>
+
+                <tr>
+                    <th>
+                        <div class="default_info">
+                            <span class="title">작성자 :</span>
+                        </div>
+                    </th>
+                    <td>
+
+                        <span class="name">작성자</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th><span class="title">등록일 :</span></th>
+                    <td><span class="date"></span></td>
+                </tr>
+                <tr>
+                    <th><span class="title">조회수 :</span></th>
+                    <td><span class="date">1</span></td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+        <!--첨부파일-->
+        <div class="add_file" style="display:">
+            <div class="add_file_header">
+                <span class="subject">
+                    <strong>첨부파일이 없습니다.</strong>
+                </span>
+            </div>
+        </div>
+        <div class="add_file" style="display:">
+            <div class="add_file_header">
+                <span class="subject">
+                    <span class="ic ic_file_s"></span>
+                    <strong>첨부파일</strong>
+                    <span class="num">2</span>개
+                    <span class="size">(1254887kbyte)</span>
+                </span>
+                <span class="btn_area">
+                    <span class="btn_wrap"><span class="txt">모두저장</span></span>
+                </span>
+            </div>
+            <ul class="file_wrap">
+                <li>
+                    <span class="item_file">
+                        <span class="name">xxx.pdf</span>
+                        <span class="size">(1254887kbyte)</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+
+
+        <div id="readContentWrap">
+            본문입니다.....
+        </div>
+
+
+    </div>
+</div>
+</body>
+</html>
