@@ -1,16 +1,13 @@
 package com.github.melpis.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 public class Board {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "BOARD_ID")
     private Long seq;
 
@@ -20,6 +17,7 @@ public class Board {
 
     private int hits;
 
+    @Temporal(TemporalType.DATE)
     private Date date;
 
     private String content;

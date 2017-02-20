@@ -4,9 +4,11 @@ package com.github.melpis.service;
 import com.github.melpis.domain.Board;
 import com.github.melpis.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class BoardServiceImpl implements BoardService {
 
     @Autowired
@@ -14,18 +16,18 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<Board> list() {
-        return repository.list();
+        return repository.findAll();
     }
 
     @Override
     public void writeBoard(Board board) {
-        repository.insertBoard(board);
+        repository.save(board);
     }
 
     @Override
     public Board readBoard(Long seq) {
 
-        Board returnBoard = repository.getBoard(seq);
+        Board returnBoard = repository.findOne(seq);
         returnBoard.increHits();
 
         return returnBoard;
@@ -33,11 +35,11 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void editBoard(Board board) {
-        repository.editBoard(board);
+        repository.save(board);
     }
 
     @Override
     public void deleteBoard(Long seq) {
-        repository.deleteBoard(seq);
+        repository.delete(seq);
     }
 }

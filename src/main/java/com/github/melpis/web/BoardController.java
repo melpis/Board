@@ -28,11 +28,12 @@ public class BoardController {
         mav.addObject("list", boardService.list());
         return mav;
     }
-    /*
+
+
     @RequestMapping(value = "/list/{page}")
     public String list(@PathVariable("page") int page, Model model) {
-        return "list";
-    }*/
+        return "board/list/" + page;
+    }
 
     @RequestMapping(value = "/write")
     public String writeBoardForm() {
