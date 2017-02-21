@@ -3,13 +3,13 @@ package com.github.melpis.web;
 import com.github.melpis.domain.Board;
 import com.github.melpis.service.BoardServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,16 +23,12 @@ public class BoardController {
     BoardServiceImpl boardService;
 
     @RequestMapping(value = "/list")
-    public ModelAndView list() {
-        ModelAndView mav = new ModelAndView("board/list");
-        mav.addObject("list", boardService.list());
-        return mav;
-    }
+    public String list(Model model,
+                             @PageableDefault(sort={"seq"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+        Page<Board> boardListPage = boardService.findAll(pageable);
+        model.addAttribute("boardListPage", boardListPage);
 
-
-    @RequestMapping(value = "/list/{page}")
-    public String list(@PathVariable("page") int page, Model model) {
-        return "board/list/" + page;
+        return "board/list";
     }
 
     @RequestMapping(value = "/write")
@@ -41,9 +37,9 @@ public class BoardController {
     }
 
     @RequestMapping(value = "/write", method = RequestMethod.POST)
-    public String writeBoardProcess(@Valid Board board, BindingResult result, SessionStatus status) {
+    public String writeBoardProcess(@ModelAttribute("board") Board board) {
         boardService.writeBoard(board);
-        status.setComplete();
+
         return "redirect:/board/list";
     }
 
@@ -56,20 +52,24 @@ public class BoardController {
     }
 
     @RequestMapping(value = "/edit/{seq}")
-    public String editBoardForm(@PathVariable("seq") Long seq) {
+    public String editBoardForm(@PathVariable("seq") Long seq, Model model) {
+        Board editBoard = boardService.findOne(seq);
+        model.addAttribute("editBoard", editBoard);
+
         return "board/edit/" + seq;
     }
 
     @RequestMapping(value = "/edit/{seq}", method = RequestMethod.POST)
-    public String editBoardProcess(@PathVariable("seq") Long seq, @Valid Board board, BindingResult result, SessionStatus status) {
+    public String editBoardProcess(@ModelAttribute("board") Board board) {
         boardService.editBoard(board);
-        status.setComplete();
-        return "redirect:/board/read/" + seq;
+
+        return "redirect:/board/read/" + board.getSeq();
     }
 
     @RequestMapping(value = "/delete/{seq}")
     public String deleteBoard(@PathVariable("seq") Long seq) {
         boardService.deleteBoard(seq);
+
         return "redirect:/board/list";
     }
 }

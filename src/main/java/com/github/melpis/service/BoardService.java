@@ -2,13 +2,13 @@ package com.github.melpis.service;
 
 
 import com.github.melpis.domain.Board;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface BoardService {
 
-    List<Board> list();
-    // List<Board> list(int page);
+    Page<Board> findAll(Pageable pageable);
 
     void writeBoard(Board board);
 
@@ -17,5 +17,8 @@ public interface BoardService {
     void editBoard(Board board);
 
     void deleteBoard(Long seq);
+
+    Board findOne(Long seq);
+
 
 }

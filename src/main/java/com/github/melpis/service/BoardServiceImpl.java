@@ -4,19 +4,22 @@ package com.github.melpis.service;
 import com.github.melpis.domain.Board;
 import com.github.melpis.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
+@Transactional
 public class BoardServiceImpl implements BoardService {
 
     @Autowired
     BoardRepository repository;
 
     @Override
-    public List<Board> list() {
-        return repository.findAll();
+    public Page<Board> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override
@@ -29,6 +32,7 @@ public class BoardServiceImpl implements BoardService {
 
         Board returnBoard = repository.findOne(seq);
         returnBoard.increHits();
+        repository.save(returnBoard);
 
         return returnBoard;
     }
@@ -42,4 +46,11 @@ public class BoardServiceImpl implements BoardService {
     public void deleteBoard(Long seq) {
         repository.delete(seq);
     }
+
+    @Override
+    public Board findOne(Long seq) {
+        return repository.findOne(seq);
+    }
+
+
 }
