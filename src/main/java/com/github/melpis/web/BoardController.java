@@ -1,12 +1,14 @@
 package com.github.melpis.web;
 
 import com.github.melpis.domain.Board;
+import com.github.melpis.domain.Comment;
 import com.github.melpis.service.BoardServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -15,60 +17,68 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 
-@RestController
+@Controller
 @RequestMapping(value = "/board")
 public class BoardController {
 
     @Autowired
     BoardServiceImpl boardService;
 
-    @RequestMapping(value = "/list")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String list(Model model,
-                             @PageableDefault(sort={"seq"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+                             @PageableDefault(sort={"id"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
         Page<Board> boardListPage = boardService.findAll(pageable);
         model.addAttribute("boardListPage", boardListPage);
 
         return "board/list";
     }
 
-    @RequestMapping(value = "/write")
+    @RequestMapping(value = "/write", method = RequestMethod.GET)
     public String writeBoardForm() {
+
         return "board/write";
     }
 
     @RequestMapping(value = "/write", method = RequestMethod.POST)
-    public String writeBoardProcess(@ModelAttribute("board") Board board) {
-        boardService.writeBoard(board);
+    public String writeBoardProcess(@RequestBody Board board) {
+        boardService.save(board);
 
-        return "redirect:/board/list";
+        return "redirect:/board/read/{" + board.getId() + "}";
     }
 
-    @RequestMapping(value = "/read/{seq}")
-    public String readBoard(@PathVariable("seq") Long seq, Model model) {
-        Board board = boardService.readBoard(seq);
+    @RequestMapping(value = "/read/{id}", method = RequestMethod.GET)
+    public String readBoard(@PathVariable("id") Long id, Model model) {
+        Board board = boardService.readBoard(id);
         model.addAttribute("board", board);
 
-        return "board/read/" + seq;
+        return "board/read/{" + id + "}";
     }
 
-    @RequestMapping(value = "/edit/{seq}")
-    public String editBoardForm(@PathVariable("seq") Long seq, Model model) {
-        Board editBoard = boardService.findOne(seq);
+    @RequestMapping(value = "/read/{id}", method = RequestMethod.POST)
+    public String writeComment(@PathVariable("id") Long id, @RequestBody Comment comment) {
+        boardService.addComment(id, comment);
+
+        return "redirect:board/read/{" + id + "}";
+    }
+
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String editBoardForm(@PathVariable("id") Long id, Model model) {
+        Board editBoard = boardService.findOne(id);
         model.addAttribute("editBoard", editBoard);
 
-        return "board/edit/" + seq;
+        return "board/edit/{" + id + "}";
     }
 
     @RequestMapping(value = "/edit/{seq}", method = RequestMethod.POST)
-    public String editBoardProcess(@ModelAttribute("board") Board board) {
-        boardService.editBoard(board);
+    public String editBoardProcess(@RequestBody Board board) {
+        boardService.save(board);
 
-        return "redirect:/board/read/" + board.getSeq();
+        return "redirect:/board/read/{" + board.getId() + "}";
     }
 
-    @RequestMapping(value = "/delete/{seq}")
-    public String deleteBoard(@PathVariable("seq") Long seq) {
-        boardService.deleteBoard(seq);
+    @RequestMapping(value = "/delete/{seq}", method = RequestMethod.GET)
+    public String deleteBoard(@PathVariable("id") Long id) {
+        boardService.delete(id);
 
         return "redirect:/board/list";
     }

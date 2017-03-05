@@ -1,79 +1,48 @@
 package com.github.melpis.domain;
 
+import lombok.*;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
+@Data
+@AllArgsConstructor
 public class Board {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "BOARD_ID")
-    private Long seq;
+    private Long id;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String writer;
 
-    private int hits;
+    @Column(nullable = false)
+    private String content;
 
     @Temporal(TemporalType.DATE)
     private Date date;
 
-    private String content;
+    private int hits;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     public Board() {
         hits = 0;
     }
 
-    // getter setter
-
-    public Long getSeq() {
-        return seq;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getWriter() {
-        return writer;
-    }
-
-    public void setWriter(String writer) {
-        this.writer = writer;
-    }
-
-    public int getHits() {
-        return hits;
-    }
-
-    public void setHits(int hits) {
-        this.hits = hits;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    // increase hit
-    public void increHits() {
+    public void increaseHits() {
         hits += 1;
+    }
+
+    public void addComment(Comment comment){
+        this.comments.add(comment);
+        comment.setBoard(this);
     }
 }

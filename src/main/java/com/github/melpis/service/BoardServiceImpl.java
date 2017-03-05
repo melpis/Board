@@ -1,7 +1,7 @@
 package com.github.melpis.service;
 
-
 import com.github.melpis.domain.Board;
+import com.github.melpis.domain.Comment;
 import com.github.melpis.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,48 +9,45 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @Transactional
-public class BoardServiceImpl implements BoardService {
-
+public class BoardServiceImpl implements BoardService{
     @Autowired
-    BoardRepository repository;
+    BoardRepository boardRepository;
 
     @Override
     public Page<Board> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
+        return boardRepository.findAll(pageable);
     }
 
     @Override
-    public void writeBoard(Board board) {
-        repository.save(board);
+    public Board save(Board board) {
+        return boardRepository.save(board);
     }
 
     @Override
-    public Board readBoard(Long seq) {
-
-        Board returnBoard = repository.findOne(seq);
-        returnBoard.increHits();
-        repository.save(returnBoard);
-
-        return returnBoard;
+    public Board findOne(Long id) {
+        return boardRepository.findOne(id);
     }
 
     @Override
-    public void editBoard(Board board) {
-        repository.save(board);
+    public void delete(Long id) {
+        boardRepository.delete(id);
     }
 
     @Override
-    public void deleteBoard(Long seq) {
-        repository.delete(seq);
+    public Board readBoard(Long id) {
+        Board board = boardRepository.findOne(id);
+        board.increaseHits();
+        boardRepository.save(board);
+
+        return board;
     }
 
-    @Override
-    public Board findOne(Long seq) {
-        return repository.findOne(seq);
+    public Board addComment(Long id, Comment comment) {
+        Board board = boardRepository.findOne(id);
+        board.addComment(comment);
+        boardRepository.save(board);
+        return board;
     }
-
-
 }

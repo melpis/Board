@@ -2,23 +2,21 @@ package com.github.melpis.service;
 
 
 import com.github.melpis.domain.Board;
+import com.github.melpis.domain.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 
 public interface BoardService {
 
     Page<Board> findAll(Pageable pageable);
 
-    void writeBoard(Board board);
+    Board save(Board board);
 
-    Board readBoard(Long seq);
+    Board findOne(Long id);
 
-    void editBoard(Board board);
+    void delete(Long id);
 
-    void deleteBoard(Long seq);
+    Board readBoard(Long id);
 
-    Board findOne(Long seq);
-
-
+    Board addComment(Long id, Comment comment);
 }
