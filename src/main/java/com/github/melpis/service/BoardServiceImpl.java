@@ -9,11 +9,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Service
 @Transactional
 public class BoardServiceImpl implements BoardService{
     @Autowired
-    BoardRepository boardRepository;
+    private BoardRepository boardRepository;
 
     @Override
     public Page<Board> findAll(Pageable pageable) {
@@ -22,6 +24,8 @@ public class BoardServiceImpl implements BoardService{
 
     @Override
     public Board save(Board board) {
+        board.setDate(new Date());
+
         return boardRepository.save(board);
     }
 
@@ -45,9 +49,15 @@ public class BoardServiceImpl implements BoardService{
     }
 
     public Board addComment(Long id, Comment comment) {
-        Board board = boardRepository.findOne(id);
+
+        /*
+        JSON -> comment에 Board_ID만 나오게 변경해야됨.
+         */
+        Board board = findOne(id);
+        comment.setDate(new Date());
+        comment.setBoard(board);
         board.addComment(comment);
-        boardRepository.save(board);
+
         return board;
     }
 }

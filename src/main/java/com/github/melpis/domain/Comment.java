@@ -1,16 +1,15 @@
 package com.github.melpis.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
 
+
 @Entity
 @Data
-@Setter
-@Getter
 public class Comment {
 
     @Id
@@ -21,10 +20,16 @@ public class Comment {
     @Column(nullable = false)
     private String writer;
 
+    @Column(nullable = false)
+    private String comment;
+
     @Temporal(TemporalType.DATE)
     private Date date;
 
+
     @ManyToOne
     @JoinColumn(name = "BOARD_ID")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "COMMENT_ID")
     private Board board;
+
 }

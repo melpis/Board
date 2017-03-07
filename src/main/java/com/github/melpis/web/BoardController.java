@@ -16,8 +16,9 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Date;
 
-@Controller
+@RestController
 @RequestMapping(value = "/board")
 public class BoardController {
 
@@ -25,61 +26,51 @@ public class BoardController {
     BoardServiceImpl boardService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public String list(Model model,
-                             @PageableDefault(sort={"id"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+    public Page<Board> list(@PageableDefault(sort={"id"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
         Page<Board> boardListPage = boardService.findAll(pageable);
-        model.addAttribute("boardListPage", boardListPage);
 
-        return "board/list";
+        return boardListPage;
     }
 
     @RequestMapping(value = "/write", method = RequestMethod.GET)
-    public String writeBoardForm() {
+    public void writeBoardForm() {
 
-        return "board/write";
     }
 
     @RequestMapping(value = "/write", method = RequestMethod.POST)
-    public String writeBoardProcess(@RequestBody Board board) {
-        boardService.save(board);
+    public Board writeBoardProcess(@RequestBody Board board) {
 
-        return "redirect:/board/read/{" + board.getId() + "}";
+        return boardService.save(board);
     }
 
     @RequestMapping(value = "/read/{id}", method = RequestMethod.GET)
-    public String readBoard(@PathVariable("id") Long id, Model model) {
-        Board board = boardService.readBoard(id);
-        model.addAttribute("board", board);
+    public Board readBoard(@PathVariable("id") Long id) {
 
-        return "board/read/{" + id + "}";
+        return boardService.readBoard(id);
     }
 
     @RequestMapping(value = "/read/{id}", method = RequestMethod.POST)
-    public String writeComment(@PathVariable("id") Long id, @RequestBody Comment comment) {
-        boardService.addComment(id, comment);
+    public Board writeComment(@PathVariable("id") Long id, @RequestBody Comment comment) {
 
-        return "redirect:board/read/{" + id + "}";
+        return boardService.addComment(id, comment);
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String editBoardForm(@PathVariable("id") Long id, Model model) {
-        Board editBoard = boardService.findOne(id);
-        model.addAttribute("editBoard", editBoard);
+    public Board editBoardForm(@PathVariable("id") Long id) {
 
-        return "board/edit/{" + id + "}";
+        return boardService.findOne(id);
     }
 
-    @RequestMapping(value = "/edit/{seq}", method = RequestMethod.POST)
-    public String editBoardProcess(@RequestBody Board board) {
-        boardService.save(board);
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
+    public Board editBoardProcess(@PathVariable Long id, @RequestBody Board board) {
+        board.setId(id);
 
-        return "redirect:/board/read/{" + board.getId() + "}";
+        return boardService.save(board);
     }
 
-    @RequestMapping(value = "/delete/{seq}", method = RequestMethod.GET)
-    public String deleteBoard(@PathVariable("id") Long id) {
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public void deleteBoard(@PathVariable("id") Long id) {
+
         boardService.delete(id);
-
-        return "redirect:/board/list";
     }
 }
