@@ -1,6 +1,7 @@
 package com.github.melpis.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ import java.util.Date;
 public class Comment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMMENT_ID")
     private Long id;
 
@@ -26,10 +27,16 @@ public class Comment {
     @Temporal(TemporalType.DATE)
     private Date date;
 
-
     @ManyToOne
     @JoinColumn(name = "BOARD_ID")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "COMMENT_ID")
+    @JsonIgnore
     private Board board;
 
+    public void setBoard(Board board) {
+        this.board = board;
+
+        if (!board.getComments().contains(this)) {
+            board.getComments().add(this);
+        }
+    }
 }

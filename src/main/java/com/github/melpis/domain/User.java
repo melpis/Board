@@ -3,33 +3,24 @@ package com.github.melpis.domain;
 import lombok.Data;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    private String id;
+    private Long id;
+
+    @Column(nullable = false)
+    private String userId;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private String email;
-
-
-    public User() {
-
-    }
-
-    public User(String id, String password, String email) {
-        this.id = id;
-        this.password = password;
-        this.email = email;
-    }
 
 }

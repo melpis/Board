@@ -1,8 +1,5 @@
 package com.github.melpis.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
@@ -34,7 +31,6 @@ public class Board {
     private int hits;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "BOARD_ID")
     private List<Comment> comments = new ArrayList<>();
 
     public Board() {
@@ -47,6 +43,10 @@ public class Board {
 
     public void addComment(Comment comment){
         comments.add(comment);
+
+        if (comment.getBoard() != this) {
+            comment.setBoard(this);
+        }
     }
 
 }

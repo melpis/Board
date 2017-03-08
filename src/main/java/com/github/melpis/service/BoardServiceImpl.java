@@ -3,11 +3,13 @@ package com.github.melpis.service;
 import com.github.melpis.domain.Board;
 import com.github.melpis.domain.Comment;
 import com.github.melpis.repository.BoardRepository;
+import com.github.melpis.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.rmi.runtime.Log;
 
 import java.util.Date;
 
@@ -50,14 +52,11 @@ public class BoardServiceImpl implements BoardService{
 
     public Board addComment(Long id, Comment comment) {
 
-        /*
-        JSON -> comment에 Board_ID만 나오게 변경해야됨.
-         */
         Board board = findOne(id);
         comment.setDate(new Date());
         comment.setBoard(board);
-        board.addComment(comment);
+        System.out.println("ADD COMMENT");
 
-        return board;
+        return boardRepository.save(board);
     }
 }

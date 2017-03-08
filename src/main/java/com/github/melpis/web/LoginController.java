@@ -1,6 +1,9 @@
 package com.github.melpis.web;
 
 import com.github.melpis.domain.User;
+import com.github.melpis.service.UserService;
+import com.github.melpis.service.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class LoginController {
+
+    @Autowired
+    UserServiceImpl userService;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String loginForm() {
@@ -27,8 +33,11 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/join", method = RequestMethod.POST)
-    public String joinProcess() {
+    public String joinProcess(@RequestBody User user) {
+        if (userService.save(user)) {
+            return "/login";
+        }
 
-        return "/login";
+        return "/join";
     }
 }
