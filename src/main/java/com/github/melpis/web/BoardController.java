@@ -23,7 +23,7 @@ import java.util.Date;
 public class BoardController {
 
     @Autowired
-    BoardServiceImpl boardService;
+    private BoardServiceImpl boardService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public Page<Board> list(@PageableDefault(sort={"id"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
