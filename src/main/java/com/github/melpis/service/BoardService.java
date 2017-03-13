@@ -5,12 +5,15 @@ import com.github.melpis.domain.Board;
 import com.github.melpis.domain.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface BoardService {
 
     Page<Board> findAll(Pageable pageable);
 
-    Board save(Board board);
+    Board save(Board board, MultipartFile file) throws IOException;
 
     Board findOne(Long id);
 

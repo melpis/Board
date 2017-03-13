@@ -13,9 +13,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.annotation.MultipartConfig;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
 @RestController
@@ -38,9 +44,10 @@ public class BoardController {
     }
 
     @RequestMapping(value = "/write", method = RequestMethod.POST)
-    public Board writeBoardProcess(@RequestBody Board board) {
+    public Board writeBoardProcess(@RequestBody Board board,
+                                   @RequestParam(name = "file", required=false) MultipartFile file) throws IOException {
 
-        return boardService.save(board);
+        return boardService.save(board, file);
     }
 
     @RequestMapping(value = "/read/{id}", method = RequestMethod.GET)
@@ -62,10 +69,11 @@ public class BoardController {
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
-    public Board editBoardProcess(@PathVariable Long id, @RequestBody Board board) {
+    public Board editBoardProcess(@PathVariable Long id, @RequestBody Board board,
+                                  @RequestParam(name = "file", required=false) MultipartFile file) throws IOException {
         board.setId(id);
 
-        return boardService.save(board);
+        return boardService.save(board, file);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
