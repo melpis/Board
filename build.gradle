@@ -33,6 +33,8 @@ dependencies {
 	compile('org.projectlombok:lombok:1.16.14')
 	compile("org.springframework.boot:spring-boot-devtools")
 	compile("org.springframework.boot:spring-boot-starter-security")
+	compile("org.apache.commons:commos-lang3:3.4")
+	compile("org.commons-io:commons-io:2.5")
 	runtime('org.postgresql:postgresql')
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')

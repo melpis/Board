@@ -2,6 +2,7 @@ package com.github.melpis.service;
 
 import com.github.melpis.domain.Board;
 import com.github.melpis.domain.Comment;
+import com.github.melpis.domain.User;
 import com.github.melpis.repository.BoardRepository;
 import com.github.melpis.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,9 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public Board save(Board board) {
+    public Board save(Board board, String username) {
         board.setDate(new Date());
+        board.setWriter(username);
 
         return boardRepository.save(board);
     }

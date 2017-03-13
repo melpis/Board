@@ -2,12 +2,16 @@ package com.github.melpis.web;
 
 import com.github.melpis.domain.Board;
 import com.github.melpis.domain.Comment;
+import com.github.melpis.domain.User;
 import com.github.melpis.service.BoardServiceImpl;
+import com.github.melpis.service.UserDetailsImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,9 +42,9 @@ public class BoardController {
     }
 
     @RequestMapping(value = "/write", method = RequestMethod.POST)
-    public Board writeBoardProcess(@RequestBody Board board) {
+    public Board writeBoardProcess(@RequestBody Board board, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return boardService.save(board);
+        return boardService.save(board, userDetails.getUsername());
     }
 
     @RequestMapping(value = "/read/{id}", method = RequestMethod.GET)
@@ -62,10 +66,11 @@ public class BoardController {
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
-    public Board editBoardProcess(@PathVariable Long id, @RequestBody Board board) {
+    public Board editBoardProcess(@PathVariable Long id, @RequestBody Board board,
+                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
         board.setId(id);
 
-        return boardService.save(board);
+        return boardService.save(board, userDetails.getUsername());
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)

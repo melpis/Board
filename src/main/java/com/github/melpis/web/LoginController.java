@@ -18,12 +18,6 @@ public class LoginController {
         return "/login";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String loginProcess(@RequestBody User user) {
-
-        return "/board/list";
-    }
-
     @RequestMapping(value = "/join", method = RequestMethod.GET)
     public String joinForm() {
 

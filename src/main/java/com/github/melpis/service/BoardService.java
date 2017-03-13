@@ -10,7 +10,7 @@ public interface BoardService {
 
     Page<Board> findAll(Pageable pageable);
 
-    Board save(Board board);
+    Board save(Board board, String username);
 
     Board findOne(Long id);
 
