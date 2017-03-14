@@ -1,9 +1,6 @@
 package com.github.melpis.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -36,7 +33,9 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
-    private String fileRef;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AttachFile> attachFiles = new ArrayList<>();
 
     public Board() {
         hits = 0;
@@ -51,6 +50,14 @@ public class Board {
 
         if (comment.getBoard() != this) {
             comment.setBoard(this);
+        }
+    }
+
+    public void addFile(AttachFile attachFile){
+        attachFiles.add(attachFile);
+
+        if (attachFile.getBoard() != this) {
+            attachFile.setBoard(this);
         }
     }
 

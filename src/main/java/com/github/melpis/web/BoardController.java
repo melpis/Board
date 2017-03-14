@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/board")
@@ -45,9 +46,9 @@ public class BoardController {
 
     @RequestMapping(value = "/write", method = RequestMethod.POST)
     public Board writeBoardProcess(@RequestBody Board board,
-                                   @RequestParam(name = "file", required=false) MultipartFile file) throws IOException {
+                                   @RequestParam(name = "files", required=false) List<MultipartFile> files) throws IOException {
 
-        return boardService.save(board, file);
+        return boardService.save(board, files);
     }
 
     @RequestMapping(value = "/read/{id}", method = RequestMethod.GET)
@@ -70,10 +71,10 @@ public class BoardController {
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
     public Board editBoardProcess(@PathVariable Long id, @RequestBody Board board,
-                                  @RequestParam(name = "file", required=false) MultipartFile file) throws IOException {
+                                  @RequestParam(name = "files", required=false) List<MultipartFile> files) throws IOException {
         board.setId(id);
 
-        return boardService.save(board, file);
+        return boardService.save(board, files);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)

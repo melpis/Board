@@ -15,6 +15,7 @@ import sun.rmi.runtime.Log;
 import javax.servlet.annotation.MultipartConfig;
 import java.io.*;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -22,6 +23,8 @@ import java.util.Date;
 public class BoardServiceImpl implements BoardService{
     @Autowired
     private BoardRepository boardRepository;
+    @Autowired
+    private AttachFileService attachFileService;
 
     @Override
     public Page<Board> findAll(Pageable pageable) {
@@ -29,23 +32,16 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public Board save(Board board, MultipartFile file) throws IOException {
+    public Board save(Board board, List<MultipartFile> attachFiles) throws IOException {
         board.setDate(new Date());
+        boardRepository.saveAndFlush(board);
 
-        if(file != null) {
-            String fileName = file.getOriginalFilename();
-            String path = "D:/" + board.getId() + "/" + fileName;
-            byte[] bytes = file.getBytes();
-
-            File uploadFile = new File(path);
-            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadFile));
-            outputStream.write(bytes);
-            outputStream.close();
-
-            board.setFileRef(path);
+        if(attachFiles != null && !attachFiles.isEmpty()) {
+            attachFileService.registerFileList(board, attachFiles);
+            boardRepository.save(board);
         }
 
-        return boardRepository.save(board);
+        return boardRepository.findOne(board.getId());
     }
 
     @Override
