@@ -1,9 +1,6 @@
 package com.github.melpis.service;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,8 @@ import com.github.melpis.domain.AttachFile;
 import com.github.melpis.domain.Board;
 import com.github.melpis.repository.AttachFileRepository;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Service
 @Transactional
 public class AttachFileServiceImpl implements AttachFileService {
@@ -22,6 +21,12 @@ public class AttachFileServiceImpl implements AttachFileService {
     @Autowired
     AttachFileRepository attachFileRepository;
 
+    @Override
+    public AttachFile findOne(Long id) {
+        return attachFileRepository.findOne(id);
+    }
+
+    @Override
     public void registerFileList(Board board, List<MultipartFile> attachFiles) {
         String filePath = getFilePath(board.getId().toString());
 
@@ -72,5 +77,47 @@ public class AttachFileServiceImpl implements AttachFileService {
         }
 
         return filePath.getName();
+    }
+
+    @Override
+    public void downloadFile(HttpServletResponse response, AttachFile fileInfo) {
+        response.setContentType(fileInfo.getContentType() + "; charset=" + "EUC-KR");
+        response.setHeader("Content-Length", "" + fileInfo.getFileSize());
+        try {
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + new String(fileInfo.getFileName().getBytes("EUC-KR"), "latin1") + ";");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        File downFile = new File(fileInfo.getFilePath(), fileInfo.getFileName());
+        FileInputStream fis = null;
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+
+        try {
+            fis = new FileInputStream(downFile);
+            bis = new BufferedInputStream(fis);
+            bos = new BufferedOutputStream(response.getOutputStream());
+
+            int readCount = 0;
+            byte[] buffer = new byte[4096];
+
+            while ((readCount = bis.read(buffer)) > 0) {
+                bos.write(buffer, 0, readCount);
+            }
+            bos.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void removeFile(List<AttachFile> filesInfo) {
+        for (int i = 0; i < filesInfo.size() ; i++) {
+            File file = new File(filesInfo.get(i).getFilePath(), filesInfo.get(i).getFileName());
+            file.delete();
+        }
     }
 }

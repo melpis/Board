@@ -1,7 +1,9 @@
 package com.github.melpis.web;
 
+import com.github.melpis.domain.AttachFile;
 import com.github.melpis.domain.Board;
 import com.github.melpis.domain.Comment;
+import com.github.melpis.service.AttachFileServiceImpl;
 import com.github.melpis.service.BoardServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +34,8 @@ public class BoardController {
 
     @Autowired
     private BoardServiceImpl boardService;
+    @Autowired
+    private AttachFileServiceImpl attachFileService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public Page<Board> list(@PageableDefault(sort={"id"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
@@ -63,6 +68,13 @@ public class BoardController {
         return boardService.addComment(id, comment);
     }
 
+    @RequestMapping(value = "/read/{id}/{fileId}", method = RequestMethod.GET)
+    public void downloadFile(@PathVariable("id") Long id, @PathVariable("fileId") Long fileId,
+                             HttpServletResponse response) {
+        AttachFile downFile = attachFileService.findOne(fileId);
+        attachFileService.downloadFile(response, downFile);
+    }
+
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public Board editBoardForm(@PathVariable("id") Long id) {
 
@@ -80,6 +92,8 @@ public class BoardController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public void deleteBoard(@PathVariable("id") Long id) {
 
+        Board deletedBoard = boardService.findOne(id);
+        attachFileService.removeFile(deletedBoard.getAttachFiles());
         boardService.delete(id);
     }
 }
